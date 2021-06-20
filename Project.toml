@@ -1,0 +1,10 @@
+name = "KeyboardDriven"
+uuid = "d6b73c45-a735-4b19-932b-179aebda8fdc"
+authors = ["Stefan Peterson <stefan.j.peterson@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+TERMIOS = "10233e3b-0d6c-416a-8c1a-d3d286bd6cd2"
+
+[compat]
+julia = "^1"
