@@ -1,0 +1,128 @@
+#!/usr/bin/env julia
+
+using Test
+
+import KeyboardDriven:
+    CharKey,
+    bytestokey,
+    escape,
+    f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12,
+    arrowUp, arrowDown, arrowLeft, arrowRight,
+    endKey, home, ins, del,
+    pgUp, pgDn,
+    returnKey
+
+@testset "Test single byte character keys" begin
+    @test bytestokey(0x20) == CharKey(' ')
+    @test bytestokey(0x35) == CharKey('5')
+    @test bytestokey(0x7a) == CharKey('z')
+end
+
+@testset "Test single byte special keys" begin
+    @test bytestokey(0x0a) == returnKey
+    @test bytestokey(0x1b) == escape
+end
+
+@testset "Test single byte modified keys" begin
+    @test bytestokey(0x00) == ctrl | CharKey(' ')
+    @test bytestokey(0x06) == ctrl | CharKey('f')
+    @test bytestokey(0x1d) == ctrl | CharKey('5')
+    @test bytestokey(0x1e) == ctrl | CharKey('6')
+    @test bytestokey(0x1f) == ctrl | CharKey('7')
+end
+
+@testset "Test two-byte modified character keys" begin
+    @test bytestokey((0x1b, 0x72)) == alt | CharKey('r')
+end
+
+@testset "Test two-byte regional character keys" begin
+    @test bytestokey((0xc3, 0x9f)) == CharKey('ß')
+    @test bytestokey((0xc3, 0xa5)) == CharKey('å')
+    @test bytestokey((0xc3, 0xb8)) == CharKey('ø')
+end
+
+@testset "Test two-byte special character keys" begin
+    @test bytestokey((0xc2, 0xa4)) == CharKey('¤')
+    @test bytestokey((0xc2, 0xa7)) == CharKey('§')
+end
+
+@testset "Test two-byte modified regional character keys" begin
+    @test bytestokey((0xd1, 0x8d)) == ctrl | CharKey('ä')
+    @test bytestokey((0xd1, 0x8b)) == ctrl | CharKey('ß')
+end
+
+@testset "Test two-byte modified character keys" begin
+    @test bytestokey((0x1b, 0x00)) == alt | ctrl | CharKey(' ')
+    @test bytestokey((0x1b, 0x01)) == alt | ctrl | CharKey('a')
+    @test bytestokey((0x1b, 0x0b)) == alt | ctrl | CharKey('k')
+end
+
+@testset "Test three-byte modified regional character keys" begin
+    @test bytestokey((0x1b, 0xd0, 0xb6)) == alt |  ctrl | CharKey('ö')
+    @test bytestokey((0x1b, 0xd1, 0x85)) == alt |  ctrl | CharKey('å')
+end
+
+@testset "Test three-byte special keys" begin
+    @test bytestokey((0x1b, 0x4f, 0x50)) == f1
+    @test bytestokey((0x1b, 0x4f, 0x51)) == f2
+    @test bytestokey((0x1b, 0x4f, 0x52)) == f3
+    @test bytestokey((0x1b, 0x4f, 0x53)) == f4
+    @test bytestokey((0x1b, 0x5b, 0x41)) == arrowUp
+    @test bytestokey((0x1b, 0x5b, 0x42)) == arrowDown
+    @test bytestokey((0x1b, 0x5b, 0x43)) == arrowRight
+    @test bytestokey((0x1b, 0x5b, 0x44)) == arrowLeft
+    @test bytestokey((0x1b, 0x5b, 0x46)) == endKey
+    @test bytestokey((0x1b, 0x5b, 0x48)) == home
+end
+
+@testset "Test three-byte special character keys" begin
+    @test bytestokey((0xe2, 0x82, 0xac)) == CharKey('€')
+end
+
+@testset "Test four-byte special keys" begin
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x7e)) == ins
+    @test bytestokey((0x1b, 0x5b, 0x33, 0x7e)) == del
+    @test bytestokey((0x1b, 0x5b, 0x35, 0x7e)) == pgUp
+    @test bytestokey((0x1b, 0x5b, 0x36, 0x7e)) == pgDn
+end
+
+@testset "Test five-byte special keys" begin
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x35, 0x7e)) == f5
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x37, 0x7e)) == f6
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x38, 0x7e)) == f7
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x39, 0x7e)) == f8
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x30, 0x7e)) == f9
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x31, 0x7e)) == f10
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x33, 0x7e)) == f11
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x34, 0x7e)) == f12
+end
+
+@testset "Test six-byte modified special keys" begin
+    @test bytestokey((0x1b, 0x5b, 0x35, 0x3b, 0x35, 0x7e)) == ctrl | pgUp
+    @test bytestokey((0x1b, 0x5b, 0x36, 0x3b, 0x35, 0x7e)) == ctrl | pgDn
+    @test bytestokey((0x1b, 0x5b, 0x33, 0x3b, 0x35, 0x7e)) == ctrl | del
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x3b, 0x37, 0x41)) == alt | ctrl | arrowUp
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x3b, 0x37, 0x42)) == alt | ctrl | arrowDown
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x3b, 0x37, 0x43)) == alt | ctrl | arrowRight
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x3b, 0x37, 0x44)) == alt | ctrl | arrowLeft
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x3b, 0x32, 0x41)) == shift | arrowUp
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x3b, 0x32, 0x42)) == shift | arrowDown
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x3b, 0x32, 0x43)) == shift | arrowRight
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x3b, 0x32, 0x44)) == shift | arrowLeft
+end
+
+@testset "Test seven-byte modified special keys" begin
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x39, 0x3b, 0x35, 0x7e)) == ctrl | f8
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x30, 0x3b, 0x35, 0x7e)) == ctrl | f9
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x31, 0x3b, 0x35, 0x7e)) == ctrl | f10
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x33, 0x3b, 0x35, 0x7e)) == ctrl | f11
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x34, 0x3b, 0x35, 0x7e)) == ctrl | f12
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x37, 0x3b, 0x36, 0x7e)) == ctrl | shift | f6
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x38, 0x3b, 0x36, 0x7e)) == ctrl | shift | f7
+    @test bytestokey((0x1b, 0x5b, 0x31, 0x39, 0x3b, 0x36, 0x7e)) == ctrl | shift | f8
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x30, 0x3b, 0x36, 0x7e)) == ctrl | shift | f9
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x31, 0x3b, 0x36, 0x7e)) == ctrl | shift | f10
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x33, 0x3b, 0x36, 0x7e)) == ctrl | shift | f11
+    @test bytestokey((0x1b, 0x5b, 0x32, 0x34, 0x3b, 0x36, 0x7e)) == ctrl | shift | f12
+end
+
