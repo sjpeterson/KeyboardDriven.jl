@@ -24,13 +24,3 @@ Julia package for making keyboard-driven programs. Made for Linux, portability u
     end
 
     main()
-
-##
-
-    function handlekey!(state, key)
-        @match key begin
-            ctrl + shift + arrowUp => 
-            ModKey(Ctrl, Shift, arrowUp)
-            ModKey(
-        end
-    end
