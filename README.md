@@ -17,7 +17,7 @@ Julia package for making keyboard-driven programs. Made for Linux, portability u
         while true
             c = getkeypress()
             println(string("You pressed: ", c))
-            if c == CtrlKey('d')
+            if c == ctrl | CharKey('d')
                 break
             end
         end
