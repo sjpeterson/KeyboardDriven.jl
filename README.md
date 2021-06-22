@@ -1,5 +1,10 @@
 # KeyboardDriven.jl
+
 Julia package for making keyboard-driven programs. Made for Linux, portability uncertain.
+
+| Status | Coverage |
+| :----: | :----: |
+| [![Build Status](https://travis-ci.com/github/sjpeterson/KeyboardDriven.jl.svg?branch=main)](https://travis-ci.com/github/sjpeterson/KeyboardDriven.jl) | [![codecov.io](http://codecov.io/github/sjpeterson/KeyboardDriven.jl/coverage.svg?branch=main)](http://codecov.io/github/sjpeterson/KeyboardDriven.jl?branch=main) |
 
 ## Example
 
